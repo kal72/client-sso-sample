@@ -1,0 +1,31 @@
+final Oauth2Client oauth2Client = new Grant.AuthorizationCodeBuilder("http://192.168.0.102:9999")
+                .setClientId("bcb6cffab3941a3c")
+                .setClientSecret("a0b7447f52dd4ec28f4c7031b72c32e6")
+                .setRedirectUri("http://domain1.com:3001/callback")
+                .setScope("all")
+                .setCallbackListener(new Oauth2Client.AuthorizeCallback() {
+                    @Override
+                    public void onSuccess(Oauth2Client client, TokenStore tokenStore) {
+                        Log.i("Token : ", tokenStore.getAccessToken());
+                        Log.i("Refresh Token : ", tokenStore.getRefreshToken());
+
+                        Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                        intent.putExtra("token", new Gson().toJson(tokenStore));
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.e("error", message);
+                    }
+                }).build(this);
+
+
+        Button button = findViewById(R.id.signin);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                oauth2Client.SignIn(MainActivity.this);
+            }
+        });
